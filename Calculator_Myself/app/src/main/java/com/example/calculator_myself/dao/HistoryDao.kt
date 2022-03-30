@@ -22,10 +22,10 @@ interface HistoryDao {
     fun delete(item: History)
 
     @Query("SELECT expression FROM History WHERE uid = :uid")
-    fun getExpression(uid: Int)
+    fun getExpression(uid: Int) : String
 
     @Query("SELECT result FROM History WHERE uid = :uid")
-    fun getResult(uid: Int)
+    fun getResult(uid: Int) : String
 
 
 }

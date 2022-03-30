@@ -13,7 +13,8 @@ import androidx.room.PrimaryKey
 
 @Entity
 data class History(
-    @PrimaryKey val uid: Int?,
     @ColumnInfo(name="expression") val expression: String?,
     @ColumnInfo(name="result") val result: String?
-)
+) {
+    @PrimaryKey(autoGenerate = true) var uid: Int = 0
+}
