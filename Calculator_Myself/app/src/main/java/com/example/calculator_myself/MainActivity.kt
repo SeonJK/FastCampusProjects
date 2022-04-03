@@ -16,12 +16,14 @@ class MainActivity : AppCompatActivity() {
         ActivityMainBinding.inflate(layoutInflater)
     }
 
+    lateinit var db: AppDatabase
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(binding.root)
 
         // database 초기화
-        val db = Room.databaseBuilder(
+        db = Room.databaseBuilder(
                 applicationContext,
                 AppDatabase::class.java,
                 "history-database"
@@ -33,21 +35,21 @@ class MainActivity : AppCompatActivity() {
 //        }
 
         // 버튼 클릭시 넣을 텍스트 설정
-        binding.btnZero.setOnClickListener { binding.tvMain.text = binding.tvMain.text.append("0") }
-        binding.btnOne.setOnClickListener { binding.tvMain.text = binding.tvMain.text.append("1") }
-        binding.btnTwo.setOnClickListener { binding.tvMain.text = binding.tvMain.text.append("2") }
-        binding.btnThree.setOnClickListener { binding.tvMain.text = binding.tvMain.text.append("3") }
-        binding.btnFour.setOnClickListener { binding.tvMain.text = binding.tvMain.text.append("4") }
-        binding.btnFive.setOnClickListener { binding.tvMain.text = binding.tvMain.text.append("5") }
-        binding.btnSix.setOnClickListener { binding.tvMain.text = binding.tvMain.text.append("6") }
-        binding.btnSeven.setOnClickListener { binding.tvMain.text = binding.tvMain.text.append("7") }
-        binding.btnEight.setOnClickListener { binding.tvMain.text = binding.tvMain.text.append("8") }
-        binding.btnNine.setOnClickListener { binding.tvMain.text = binding.tvMain.text.append("9") }
-        binding.btnPlus.setOnClickListener { binding.tvMain.text = binding.tvMain.text.append("+") }
-        binding.btnSubtract.setOnClickListener { binding.tvMain.text = binding.tvMain.text.append("-") }
-        binding.btnMultiply.setOnClickListener { binding.tvMain.text = binding.tvMain.text.append("⨯") }
-        binding.btnDivision.setOnClickListener { binding.tvMain.text = binding.tvMain.text.append("÷") }
-        binding.btnModulo.setOnClickListener { binding.tvMain.text = binding.tvMain.text.append("%") }
+        binding.btnZero.setOnClickListener { binding.tvMain.append("0") }
+        binding.btnOne.setOnClickListener { binding.tvMain.append("1") }
+        binding.btnTwo.setOnClickListener { binding.tvMain.append("2") }
+        binding.btnThree.setOnClickListener { binding.tvMain.append("3") }
+        binding.btnFour.setOnClickListener { binding.tvMain.append("4") }
+        binding.btnFive.setOnClickListener { binding.tvMain.append("5") }
+        binding.btnSix.setOnClickListener { binding.tvMain.append("6") }
+        binding.btnSeven.setOnClickListener { binding.tvMain.append("7") }
+        binding.btnEight.setOnClickListener { binding.tvMain.append("8") }
+        binding.btnNine.setOnClickListener { binding.tvMain.append("9") }
+        binding.btnPlus.setOnClickListener { binding.tvMain.append("+") }
+        binding.btnSubtract.setOnClickListener { binding.tvMain.append("-") }
+        binding.btnMultiply.setOnClickListener { binding.tvMain.append("⨯") }
+        binding.btnDivision.setOnClickListener { binding.tvMain.append("÷") }
+        binding.btnModulo.setOnClickListener { binding.tvMain.append("%") }
 
         // 클리어 버튼 설정
         binding.btnClear.setOnClickListener {
