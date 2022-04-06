@@ -19,9 +19,6 @@ import androidx.core.os.bundleOf
 import com.example.imageslide_myself.databinding.ActivityMainBinding
 
 class MainActivity : AppCompatActivity() {
-
-    val TAG: String = "로그"
-
     lateinit var activityResultLauncher: ActivityResultLauncher<Intent>
 
     private val binding: ActivityMainBinding by lazy {
@@ -52,7 +49,6 @@ class MainActivity : AppCompatActivity() {
                 // 정상적인 결과코드를 반환하지 않았을 경우 예외처리
                 if (result.resultCode != Activity.RESULT_OK) {
                     Toast.makeText(this, "사진을 가져오지 못했습니다.", Toast.LENGTH_SHORT).show()
-                    Log.d(TAG, "launcher.StartActivityForResult - result.resultCode != RESULT_OK() called")
                 } else {
                     // 정상적으로 이미지를 가져왔을 경우 이미지뷰에 세팅
                     val selectedImageUri: Uri? = result.data?.data
@@ -71,7 +67,6 @@ class MainActivity : AppCompatActivity() {
 
                     } else {    // 받아온 Uri가 null일 때
                         Toast.makeText(this, "사진을 가져오지 못했습니다.", Toast.LENGTH_SHORT).show()
-                        Log.d(TAG, "launcher.startActivityForResult - selectedImageUri == null called")
                     }
                 }
             }
@@ -94,7 +89,6 @@ class MainActivity : AppCompatActivity() {
             2 -> {
                 if(grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                     // 권한이 허용되었을 때
-                    Log.d(TAG, "MainActivity - onRequestPermissionsResult() - openSelector() called")
                     openSelector()
                 } else {
                     // 권한을 거부하였을 때
@@ -115,7 +109,6 @@ class MainActivity : AppCompatActivity() {
                 // 권한이 허용되어져 있을 때
                 checkSelfPermission(Manifest.permission.READ_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED
                 -> {
-                    Log.d(TAG, "MainActivity - setPermission() - openSelector() called")
                     openSelector()  // 셀렉터 시작 함수
                 }
 
