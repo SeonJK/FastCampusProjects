@@ -12,6 +12,10 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.ImageSlide_Myself">
         <activity
+            android:name=".ImageSlideActivity"
+            android:screenOrientation="landscape"
+            android:exported="false" />
+        <activity
             android:name=".MainActivity"
             android:exported="true">
             <intent-filter>

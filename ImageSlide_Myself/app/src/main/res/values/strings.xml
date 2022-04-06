@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">ImageSlide_Myself</string>
+    <string name="app_name">ImageSlide</string>
     <string name="run_slide">전자액자 실행하기</string>
     <string name="add_image">사진 추가하기</string>
 </resources>

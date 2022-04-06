@@ -15,6 +15,7 @@ import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.os.bundleOf
 import com.example.imageslide_myself.databinding.ActivityMainBinding
 
 class MainActivity : AppCompatActivity() {
@@ -28,15 +29,18 @@ class MainActivity : AppCompatActivity() {
     }
 
     private val imageViewList: List<ImageView> by lazy {
-        listOf(
-            binding.img11,
-            binding.img12,
-            binding.img13,
-            binding.img21,
-            binding.img22,
-            binding.img23
-        )
+        mutableListOf<ImageView>().apply {
+            add(binding.img11)
+            add(binding.img12)
+            add(binding.img13)
+            add(binding.img21)
+            add(binding.img22)
+            add(binding.img23)
+        }
     }
+
+    // 다음 액티비티에 넘겨주어야 하기 때문에 따로 저장
+    private val imageUriList: MutableList<Uri> = mutableListOf()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -48,20 +52,26 @@ class MainActivity : AppCompatActivity() {
                 // 정상적인 결과코드를 반환하지 않았을 경우 예외처리
                 if (result.resultCode != Activity.RESULT_OK) {
                     Toast.makeText(this, "사진을 가져오지 못했습니다.", Toast.LENGTH_SHORT).show()
+                    Log.d(TAG, "launcher.StartActivityForResult - result.resultCode != RESULT_OK() called")
                 } else {
                     // 정상적으로 이미지를 가져왔을 경우 이미지뷰에 세팅
                     val selectedImageUri: Uri? = result.data?.data
-//                    result.data?.let {
-//                        val selectdImageUri: Uri? = it.data
-//                    }
 
-                    imageViewList.forEach {
-                        if (it.drawable == null) {
-                            it.setImageURI(selectedImageUri)
-                            Toast.makeText(this, "이미지가 성공적으로 선택되었습니다.", Toast.LENGTH_SHORT).show()
+                    if( selectedImageUri != null) {
 
+                        // 이미지뷰가 다 찼을 때
+                        if(imageUriList.size == 6) {
+                            Toast.makeText(this, "이미 사진이 꽉 찼습니다.", Toast.LENGTH_SHORT).show()
                             return@registerForActivityResult
                         }
+
+                        imageUriList.add(selectedImageUri)
+                        imageViewList[imageUriList.size-1].setImageURI(selectedImageUri)
+                        Toast.makeText(this, "사진을 성공적으로 가져왔습니다.", Toast.LENGTH_SHORT).show()
+
+                    } else {    // 받아온 Uri가 null일 때
+                        Toast.makeText(this, "사진을 가져오지 못했습니다.", Toast.LENGTH_SHORT).show()
+                        Log.d(TAG, "launcher.startActivityForResult - selectedImageUri == null called")
                     }
                 }
             }
@@ -71,29 +81,6 @@ class MainActivity : AppCompatActivity() {
 
         // 전자액자 실행 버튼
         startImageSlideButton()
-
-    }
-
-    private fun startImageSlideButton() {
-//        TODO("Not yet implemented")
-    }
-
-    private fun initAddPhotoButton() {
-        binding.btnAddImage.setOnClickListener {
-            // 권한 받아오기
-            setPermission()
-        }
-    }
-
-    private fun openSelector() {
-        // 문서를 읽고 쓸 수 있는 권한으로 인텐트 정의
-        val intent = Intent(Intent.ACTION_OPEN_DOCUMENT).apply {
-            // 갤러리앱에 접근
-            addCategory(Intent.CATEGORY_OPENABLE)
-            // 이미지 타입 파일만 필터링
-            type = "image/*"
-        }
-        activityResultLauncher.launch(intent)
     }
 
     override fun onRequestPermissionsResult(
@@ -121,23 +108,26 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    private fun setPermission() {
-        when {
-            // 권한이 허용되어져 있을 때
-            checkSelfPermission(Manifest.permission.READ_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED
-            -> {
-                Log.d(TAG, "MainActivity - setPermission() - openSelector() called")
-                openSelector()  // 셀렉터 시작 함수
-            }
+    private fun initAddPhotoButton() {
+        binding.btnAddImage.setOnClickListener {
+            // 권한 받아오기
+            when {
+                // 권한이 허용되어져 있을 때
+                checkSelfPermission(Manifest.permission.READ_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED
+                -> {
+                    Log.d(TAG, "MainActivity - setPermission() - openSelector() called")
+                    openSelector()  // 셀렉터 시작 함수
+                }
 
-            // 권한이 허용되지 않았을 때 교육용 팝업을 띄운 후 권한 팝업을 띄움
-            shouldShowRequestPermissionRationale(Manifest.permission.READ_EXTERNAL_STORAGE) -> {
-                openPermissionPopup()   // 교육용 팝업 기능 함수
-            }
+                // 권한이 허용되지 않았을 때 교육용 팝업을 띄운 후 권한 팝업을 띄움
+                shouldShowRequestPermissionRationale(Manifest.permission.READ_EXTERNAL_STORAGE) -> {
+                    openPermissionPopup()   // 교육용 팝업 기능 함수
+                }
 
-            // 권한 요청
-            else -> {
-                requestPermissions(arrayOf(Manifest.permission.READ_EXTERNAL_STORAGE), 2)
+                // 권한 요청
+                else -> {
+                    requestPermissions(arrayOf(Manifest.permission.READ_EXTERNAL_STORAGE), 2)
+                }
             }
         }
     }
@@ -155,5 +145,29 @@ class MainActivity : AppCompatActivity() {
             }
             .create()
             .show()
+    }
+
+    private fun openSelector() {
+        // 문서를 읽고 쓸 수 있는 권한으로 인텐트 정의
+        val intent = Intent(Intent.ACTION_OPEN_DOCUMENT).apply {
+            // 갤러리앱에 접근
+            addCategory(Intent.CATEGORY_OPENABLE)
+            // 이미지 타입 파일만 필터링
+            type = "image/*"
+        }
+        activityResultLauncher.launch(intent)
+    }
+
+    private fun startImageSlideButton() {
+        binding.btnRunSlide.setOnClickListener {
+            val intent = Intent(applicationContext, ImageSlideActivity::class.java)
+            // 리스트 요소를 하나하나 담아주기
+            imageUriList.forEachIndexed { index, uri ->
+                intent.putExtra("image$index", uri.toString())
+            }
+            // 리스트 사이즈를 넘겨주어서 몇개까지 가져와야 하는지 알려줌
+            intent.putExtra("imageListSize", imageUriList.size)
+            startActivity(intent)
+        }
     }
 }
