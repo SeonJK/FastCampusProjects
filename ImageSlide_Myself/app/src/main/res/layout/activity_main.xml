@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:padding="15dp"
+    tools:context=".MainActivity">
+
+    <LinearLayout
+        android:id="@+id/first_linear_layout"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintDimensionRatio="H,3:1">
+
+        <ImageView
+            android:id="@+id/img11"
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:scaleType="centerCrop"
+            android:layout_height="match_parent" />
+
+        <ImageView
+            android:id="@+id/img12"
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:scaleType="centerCrop"
+            android:layout_height="match_parent" />
+
+        <ImageView
+            android:id="@+id/img13"
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:scaleType="centerCrop"
+            android:layout_height="match_parent" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/second_linear_layout"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/first_linear_layout"
+        app:layout_constraintDimensionRatio="H,3:1">
+
+        <ImageView
+            android:id="@+id/img21"
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:scaleType="centerCrop"
+            android:layout_height="match_parent" />
+
+        <ImageView
+            android:id="@+id/img22"
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:scaleType="centerCrop"
+            android:layout_height="match_parent" />
+
+        <ImageView
+            android:id="@+id/img23"
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:scaleType="centerCrop"
+            android:layout_height="match_parent" />
+    </LinearLayout>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="최대 6장의 사진을 가져올 수 있습니다."
+        android:textSize="20sp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/second_linear_layout"
+        app:layout_constraintBottom_toTopOf="@id/btn_add_image"
+        tools:ignore="HardcodedText" />
+
+    <Button
+        android:id="@+id/btn_add_image"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:text="@string/add_image"
+        android:layout_marginBottom="5dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintBottom_toTopOf="@+id/btn_run_slide"/>
+
+    <Button
+        android:id="@+id/btn_run_slide"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:text="@string/run_slide"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"/>
+
+</androidx.constraintlayout.widget.ConstraintLayout>
