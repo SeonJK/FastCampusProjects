@@ -1,12 +1,12 @@
 package com.example.pomodorotimer_myself
 
 import android.annotation.SuppressLint
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.os.CountDownTimer
 import android.widget.SeekBar
+import androidx.appcompat.app.AppCompatActivity
+import com.example.pomodorotimer_myself.Util.StatusbarTransparent.Companion.setStatusBarTransparent
 import com.example.pomodorotimer_myself.databinding.ActivityMainBinding
-import kotlin.system.measureTimeMillis
 
 class MainActivity : AppCompatActivity() {
 
@@ -18,6 +18,8 @@ class MainActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        // 상태바 투명으로 설정
+        this.setStatusBarTransparent()
         setContentView(binding.root)
 
         SoundPlayer.initSounds(applicationContext)
@@ -25,9 +27,20 @@ class MainActivity : AppCompatActivity() {
         bindViews()
     }
 
-    override fun onStop() {
-        super.onStop()
-        currentCountDownTimer?.cancel()
+    override fun onResume() {
+        super.onResume()
+        SoundPlayer.soundPool.autoResume()
+    }
+
+    override fun onPause() {
+        super.onPause()
+        SoundPlayer.soundPool.autoPause()
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        // 메모리 해제
+        SoundPlayer.soundPool.release()
     }
 
     private fun bindViews() {
@@ -38,23 +51,37 @@ class MainActivity : AppCompatActivity() {
                     if(fromUser) {
                         remainTime(progress * 60 * 1000L)
                     }
+                    SoundPlayer.soundPool.autoResume()
                 }
 
                 override fun onStartTrackingTouch(seeekBar: SeekBar?) {
                     // 기존의 타이머를 멈추고 새로운 타이머 구동
-                    currentCountDownTimer?.cancel()
-                    currentCountDownTimer = null
+                    stopCountDown()
                 }
 
                 override fun onStopTrackingTouch(seekBar: SeekBar?) {
                     // seekBar가 null이면 진행하는게 무의미 함. 그래서 null이면 return
                     seekBar ?: return
 
-                    currentCountDownTimer = countDown(seekBar.progress * 60 * 1000L)
-                    currentCountDownTimer?.start()
+                    if(seekBar.progress == 0) { // 사용자가 0으로 설정했을 경우
+                        stopCountDown()
+                    } else {
+                        currentCountDownTimer = countDown(seekBar.progress * 60 * 1000L)
+                        currentCountDownTimer?.start()
+                        // 째깍째깍 소리
+                        SoundPlayer.play(SoundPlayer.TICKING)
+                    }
+
+
                 }
             }
         )
+    }
+
+    private fun stopCountDown() {
+        currentCountDownTimer?.cancel()
+        currentCountDownTimer = null
+        SoundPlayer.soundPool.autoPause()
     }
 
     private fun countDown(initialMillis: Long) =
@@ -64,8 +91,6 @@ class MainActivity : AppCompatActivity() {
                 remainTime(millisUntilFinished)
                 // seekBar 진행
                 updateSeekBar(millisUntilFinished)
-                // 째깍째깍 소리
-                SoundPlayer.play(SoundPlayer.TICKING)
             }
 
             override fun onFinish() {
@@ -73,6 +98,7 @@ class MainActivity : AppCompatActivity() {
                 updateSeekBar(0)
 
                 // 알람 소리
+                SoundPlayer.soundPool.autoPause()
                 SoundPlayer.alarmPlay(SoundPlayer.DONE)
             }
         }.start()

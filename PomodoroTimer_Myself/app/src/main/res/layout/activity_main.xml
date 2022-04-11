@@ -6,7 +6,8 @@
     android:layout_height="match_parent"
     android:background="@color/pomodoro_red"
     android:padding="15dp"
-    tools:context=".MainActivity">
+    tools:context=".MainActivity"
+    tools:ignore="ExtraText">
 
     <ImageView
         android:layout_width="wrap_content"
@@ -15,7 +16,8 @@
         app:layout_constraintBottom_toTopOf="@+id/tv_minutes"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent"
+        tools:ignore="ContentDescription" />
 
     <TextView
         android:id="@+id/tv_minutes"
@@ -36,7 +38,7 @@
         android:id="@+id/tv_seconds"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="00"
+        android:text="00&quot;"
         android:textColor="@color/white"
         android:textSize="60sp"
         app:layout_constraintBaseline_toBaselineOf="@+id/tv_minutes"
@@ -59,8 +61,10 @@
             android:id="@+id/seekbar"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:max="60"
+            android:progressDrawable="@android:color/transparent"
             android:thumb="@drawable/ic_thumb"
-            android:max="60"/>
+            android:tickMark="@drawable/drawable_tick_mark" />
     </androidx.appcompat.widget.Toolbar>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

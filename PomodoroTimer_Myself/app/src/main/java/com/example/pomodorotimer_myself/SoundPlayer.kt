@@ -31,19 +31,21 @@ class SoundPlayer {
 
             soundPoolMap = HashMap(2)
             soundPoolMap[DONE] = soundPool.load(context, DONE, 1)
-            soundPoolMap[TICKING] = soundPool.load(context, TICKING, 2)
+            soundPoolMap[TICKING] = soundPool.load(context, TICKING, 1)
 
         }
 
         fun play(rawId: Int) {
             if( soundPoolMap.containsKey(rawId) ) {
-                soundPoolMap[rawId]?.let { soundPool.play(it, 1F, 1F, 2, 0, 1f) }
+                soundPoolMap[rawId]?.let {
+                    soundPool.play(it, 1F, 1F, 0, -1, 1f) }
             }
         }
 
         fun alarmPlay(rawId: Int) {
             if( soundPoolMap.containsKey(rawId) ) {
-                soundPoolMap[rawId]?.let { soundPool.play(it, 1f, 1f, 1, 1, 1f) }
+                soundPoolMap[rawId]?.let {
+                    soundPool.play(it, 1f, 1f, 0, 1, 1f) }
             }
         }
     }
