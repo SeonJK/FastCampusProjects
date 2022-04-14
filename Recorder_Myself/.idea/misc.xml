@@ -3,6 +3,9 @@
   <component name="DesignSurface">
     <option name="filePathToZoomLevelMap">
       <map>
+        <entry key="..\:/Users/tjswh/AndroidStudioProjects/FastCampusProjects/Recorder_Myself/app/src/main/res/drawable-v24/ic_baseline_play_arrow_24.xml" value="0.1" />
+        <entry key="..\:/Users/tjswh/AndroidStudioProjects/FastCampusProjects/Recorder_Myself/app/src/main/res/drawable-v24/ic_baseline_stop_24.xml" value="0.1" />
+        <entry key="..\:/Users/tjswh/AndroidStudioProjects/FastCampusProjects/Recorder_Myself/app/src/main/res/drawable-v24/ic_record.xml" value="0.1" />
         <entry key="..\:/Users/tjswh/AndroidStudioProjects/FastCampusProjects/Recorder_Myself/app/src/main/res/drawable/ic_baseline_play_arrow_24.xml" value="0.1" />
         <entry key="..\:/Users/tjswh/AndroidStudioProjects/FastCampusProjects/Recorder_Myself/app/src/main/res/drawable/ic_baseline_stop_24.xml" value="0.1" />
         <entry key="..\:/Users/tjswh/AndroidStudioProjects/FastCampusProjects/Recorder_Myself/app/src/main/res/drawable/ic_record.xml" value="0.1" />

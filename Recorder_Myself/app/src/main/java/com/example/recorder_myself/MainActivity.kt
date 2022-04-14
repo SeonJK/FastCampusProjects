@@ -1,6 +1,6 @@
 package com.example.recorder_myself
 
-import android.content.Context
+import android.annotation.SuppressLint
 import android.content.pm.PackageManager
 import android.media.MediaPlayer
 import android.media.MediaRecorder
@@ -8,7 +8,6 @@ import android.os.Build
 import android.os.Bundle
 import android.util.Log
 import android.view.View
-import android.widget.Button
 import android.widget.Toast
 import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
@@ -32,12 +31,15 @@ class MainActivity : AppCompatActivity() {
     private var isStartRecording = false
     private var isStartPlaying = false
 
+    private val timer = CountUpView()
+
     private val binding: ActivityMainBinding by lazy {
         ActivityMainBinding.inflate(layoutInflater)
     }
 
     private var mediaRecorder: MediaRecorder? = null
     private var player: MediaPlayer? = null
+
 
     @RequiresApi(Build.VERSION_CODES.S)
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -48,10 +50,11 @@ class MainActivity : AppCompatActivity() {
         ActivityCompat.requestPermissions(this, permissions, REQUEST_RECORD_AUDIO_PERMISSION)
 
         // 파일이름 설정
-        fileName = "${externalCacheDir?.absolutePath}/audiorecordtest.mpeg"
+        fileName = "${externalCacheDir?.absolutePath}/audiorecordtest.m4a"
 
         runRecordButton()
         runPlayButton()
+        runResetButton()
     }
 
     // 권한 처리
@@ -76,7 +79,10 @@ class MainActivity : AppCompatActivity() {
         binding.recordButton.setOnClickListener {
             isStartRecording = !isStartRecording
 
+            // flag에 따라 녹음 처리
             onRecord(isStartRecording)
+
+            // Toast에 넣을 텍스트 저장
             text = when(isStartRecording) {
                 true -> "Start recording"
                 false -> "Stop recording"
@@ -90,12 +96,27 @@ class MainActivity : AppCompatActivity() {
         binding.playButton.setOnClickListener {
             isStartPlaying = !isStartPlaying
 
+            // flag에 따라 재생 처리
             onPlay(isStartPlaying)
+
+            // Toast에 넣을 텍스트 저장
             text = when(isStartPlaying) {
                 true -> "Start playing"
                 false -> "Stop playing"
             }
             Toast.makeText(this, text, Toast.LENGTH_SHORT).show()
+        }
+    }
+
+    // 리셋버튼 클릭 처리
+    private fun runResetButton() {
+        binding.resetButton.setOnClickListener {
+            player?.release()
+            player = null
+
+            binding.recordButton.isEnabled = true
+            binding.playButton.visibility = View.GONE
+            binding.resetButton.isEnabled = false
         }
     }
 
@@ -113,6 +134,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     // 녹음 중지
+    @SuppressLint("SetTextI18n")
     private fun stopRecording() {
         mediaRecorder?.apply {
             stop()
@@ -122,8 +144,12 @@ class MainActivity : AppCompatActivity() {
 
         // 녹음버튼을 화면에 없애고, 재생버튼 활성화
         binding.recordButton.setImageResource(R.drawable.ic_record)
-        binding.recordButton.visibility = View.GONE
+        binding.recordButton.isEnabled = false
         binding.playButton.visibility = View.VISIBLE
+
+        // 리셋버튼 활성화
+        binding.resetButton.isEnabled = true
+        setTimeTextview()
     }
 
     @RequiresApi(Build.VERSION_CODES.S)
@@ -131,27 +157,25 @@ class MainActivity : AppCompatActivity() {
         // recorder 초기화
         mediaRecorder = MediaRecorder(applicationContext).apply {
             setAudioSource(MediaRecorder.AudioSource.MIC)
-            setOutputFormat(MediaRecorder.OutputFormat.MPEG_2_TS)
+            setOutputFormat(MediaRecorder.OutputFormat.MPEG_4)
             setOutputFile(fileName)
-            setAudioEncoder(MediaRecorder.AudioEncoder.DEFAULT)
+            setAudioEncoder(MediaRecorder.AudioEncoder.AAC)
 
             // 초기화 시 예외처리
             try {
                 prepare()
-                // todo {start()}에서 runtimeException 호출됨
                 start()
                 binding.recordButton.setImageResource(R.drawable.ic_baseline_stop_24)
             } catch (e: IOException) {
                 Log.d(TAG, "startRecording() - prepare() failed")
             }
         }
+        setTimeTextview()
     }
 
     private fun stopPlaying() {
-        player?.release()
-        player = null
-
         binding.playButton.setImageResource(R.drawable.ic_baseline_play_arrow_24)
+        setTimeTextview()
     }
 
     private fun startPlaying() {
@@ -166,6 +190,21 @@ class MainActivity : AppCompatActivity() {
                 Log.d(TAG, "startPlaying() - prepare() failed")
             }
         }
+        setTimeTextview()
     }
 
+    @SuppressLint("SetTextI18n")
+    private fun setTimeTextview() {
+        if(isStartRecording || isStartPlaying) {
+            if(isStartRecording) {
+                timer.start()
+            } else {
+                timer.run()
+            }
+            binding.timeTextView.text = timer.text
+        } else {
+            timer.stop()
+            binding.timeTextView.text = "00:00"
+        }
+    }
 }
