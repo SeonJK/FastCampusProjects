@@ -57,6 +57,16 @@ class MainActivity : AppCompatActivity() {
         runResetButton()
     }
 
+    override fun onDestroy() {
+        super.onDestroy()
+
+        mediaRecorder?.release()
+        mediaRecorder = null
+
+        player?.release()
+        player = null
+    }
+
     // 권한 처리
     override fun onRequestPermissionsResult(
         requestCode: Int,
@@ -113,6 +123,8 @@ class MainActivity : AppCompatActivity() {
         binding.resetButton.setOnClickListener {
             player?.release()
             player = null
+
+            mediaRecorder?.reset()
 
             binding.recordButton.isEnabled = true
             binding.playButton.visibility = View.GONE
