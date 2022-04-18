@@ -1,6 +1,7 @@
 package com.example.recorder_answer
 
 import android.Manifest
+import android.annotation.SuppressLint
 import android.content.pm.PackageManager
 import android.media.MediaPlayer
 import android.media.MediaRecorder
@@ -15,6 +16,7 @@ import java.io.IOException
 
 class MainActivity : AppCompatActivity() {
     val TAG: String = "로그"
+
     private val binding: ActivityMainBinding by lazy {
         ActivityMainBinding.inflate(layoutInflater)
     }
@@ -75,8 +77,13 @@ class MainActivity : AppCompatActivity() {
         binding.recordButton.updateIconWithState(state)
     }
 
+    @SuppressLint("SetTextI18n")
     @RequiresApi(Build.VERSION_CODES.S)
     private fun bindViews() {
+        binding.soundVisualizerView.onRequestCurrentAmplitude = {
+            recorder?.maxAmplitude ?: 0
+        }
+
         binding.recordButton.setOnClickListener {
             when (state) {
                 State.BEFORE_RECORDING -> {
@@ -96,6 +103,8 @@ class MainActivity : AppCompatActivity() {
 
         binding.resetButton.setOnClickListener {
             stopPlaying()
+            binding.soundVisualizerView.resetVisualizing()
+            binding.timeTextView.text = "00:00"
             state = State.BEFORE_RECORDING
         }
     }
@@ -115,7 +124,8 @@ class MainActivity : AppCompatActivity() {
             }
         }
         recorder?.start()
-
+        binding.soundVisualizerView.startVisualizing(false)
+        binding.timeTextView.startCountUp()
         state = State.ON_RECORDING
     }
 
@@ -125,7 +135,8 @@ class MainActivity : AppCompatActivity() {
             release()
         }
         recorder = null
-
+        binding.soundVisualizerView.stopVisualizing()
+        binding.timeTextView.stopCountUp()
         state = State.AFTER_RECORDING
     }
 
@@ -139,15 +150,20 @@ class MainActivity : AppCompatActivity() {
                 Log.d(TAG, "startPlaying() - prepare() failed")
             }
         }
+        player?.setOnCompletionListener {
+            stopPlaying()
+        }
         player?.start()
-
+        binding.soundVisualizerView.startVisualizing(true)
+        binding.timeTextView.startCountUp()
         state = State.ON_PLAYING
     }
 
     private fun stopPlaying() {
         player?.release()
         player = null
-
+        binding.soundVisualizerView.stopVisualizing()
+        binding.timeTextView.stopCountUp()
         state = State.AFTER_RECORDING
     }
 

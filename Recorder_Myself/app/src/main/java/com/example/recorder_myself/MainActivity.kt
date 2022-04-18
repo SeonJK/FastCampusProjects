@@ -31,8 +31,6 @@ class MainActivity : AppCompatActivity() {
     private var isStartRecording = false
     private var isStartPlaying = false
 
-    private val timer = CountUpView()
-
     private val binding: ActivityMainBinding by lazy {
         ActivityMainBinding.inflate(layoutInflater)
     }
@@ -208,15 +206,9 @@ class MainActivity : AppCompatActivity() {
     @SuppressLint("SetTextI18n")
     private fun setTimeTextview() {
         if(isStartRecording || isStartPlaying) {
-            if(isStartRecording) {
-                timer.start()
-            } else {
-                timer.run()
-            }
-            binding.timeTextView.text = timer.text
+            binding.timeTextView.startCountUp()
         } else {
-            timer.stop()
-            binding.timeTextView.text = "00:00"
+            binding.timeTextView.stopCountUp()
         }
     }
 }

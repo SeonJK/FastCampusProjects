@@ -1,49 +1,41 @@
-package com.example.recorder_myself
+package com.example.recorder_answer
 
 import android.annotation.SuppressLint
 import android.content.Context
-import android.os.Handler
 import android.os.SystemClock
 import android.util.AttributeSet
 import androidx.appcompat.widget.AppCompatTextView
 
 /**
- * Recorder_Myself
+ * Recorder_Answer
  * Created by authorName
- * Date: 2022-04-14
- * Time: 오후 4:51
+ * Date: 2022-04-18
+ * Time: 오전 9:54
  * */
 class CountUpView(
     context: Context,
-    attrs: AttributeSet? = null
+    attrs: AttributeSet
     ) : AppCompatTextView(context, attrs) {
 
-    companion object {
-        private const val TIME_INTERVAL = 1000L
-    }
+    private var startTimeStamp = 0L
 
-    private var startHTime = 0L
-//    var timeSwapBuff = 0L
-
-    private val countUpAction: Runnable = object : Runnable {
+    val countUpAction: Runnable = object : Runnable {
         override fun run() {
-            val timeInMillis = SystemClock.elapsedRealtime() - startHTime
-//            updatedTime = timeSwapBuff + timeInMillis
+            val currentTimeStamp = SystemClock.elapsedRealtime()
 
-            val countTimeSeconds = (timeInMillis / 1000L).toInt()
+            val countTimeSeconds = ((currentTimeStamp - startTimeStamp) / 1000L).toInt()
             updateCountTime(countTimeSeconds)
 
-            handler.postDelayed(this, TIME_INTERVAL)
+            handler?.postDelayed(this, 1000L)
         }
     }
 
     fun startCountUp() {
-        startHTime = SystemClock.elapsedRealtime()
+        startTimeStamp = SystemClock.elapsedRealtime()
         handler?.post(countUpAction)
     }
 
     fun stopCountUp() {
-//        timeSwapBuff += timeInMillis
         handler?.removeCallbacks(countUpAction)
     }
 
