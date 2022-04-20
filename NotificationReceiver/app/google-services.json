@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "165447126518",
+    "project_id": "notificationpushexercise",
+    "storage_bucket": "notificationpushexercise.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:165447126518:android:eb328d4ac32473ebaa8bd7",
+        "android_client_info": {
+          "package_name": "com.example.notificationreceiver"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "165447126518-e2p88n6dj0ij7alambnnmilbob0iro7k.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyD3Q1iH-r_GaKHpp2DZVTkCSaRDqvBdSz4"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "165447126518-e2p88n6dj0ij7alambnnmilbob0iro7k.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
