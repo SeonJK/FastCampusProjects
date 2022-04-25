@@ -69,40 +69,28 @@ class MainActivity : AppCompatActivity() {
         historyClearButtonClicked()
     }
 
-    private fun historyButtonClicked() {
-        binding.btnHistory.setOnClickListener {
-            binding.historyLayout.visibility = View.VISIBLE
+    private fun numberButtonClicked(number: String) {
 
-            // 디비를 불러오기 전에 기존에 있던 뷰를 모두 삭제
-            binding.historyLinearLayout.removeAllViews()
-
-            // 디비에서 데이터 가져와 뷰에 그리는 기능
-            Thread(Runnable {
-                db.historyDao().getAll().reversed().forEach {
-
-                    runOnUiThread {
-                        val historyView = HistoryRowBinding.inflate(LayoutInflater.from(this), null, false)
-
-                        historyView.tvExpression.text = it.expression
-                        historyView.tvResult.text = "= ${it.result}"
-                        // 뷰에 그리기(인자는 LayoutParams여야 함
-                        binding.historyLinearLayout.addView(historyView.root)
-                    }
-                }
-            }).start()
+        // 방금 전 연산자를 추가했을 경우 빈칸을 하나 삽입하여 피연산자와 구분
+        if (isOperator) {
+            binding.tvExpression.append(" ")
         }
-    }
+        isOperator = false
 
-    private fun historyClearButtonClicked() {
-        binding.btnClearHistory.setOnClickListener {
-            // 뷰에서 기록 지우기
-            binding.historyLinearLayout.removeAllViews()
+        val expressionText = binding.tvExpression.text.split(" ")
 
-            // 디비에서 데이터 삭제
-            Thread(Runnable {
-                db.historyDao().deleteAll()
-            }).start()
+        // 숫자가 15자리 이상 넘어갔을 경우 예외처리
+        if (expressionText.isNotEmpty() && expressionText.last().length >= 15) {
+            Toast.makeText(this, "15자리 까지만 사용할 수 있습니다.", Toast.LENGTH_SHORT).show()
+            return
+        } else if (expressionText.last() == "0") {
+            binding.tvExpression.text = number
+            return
         }
+
+        binding.tvExpression.append(number)
+        // 실시간 계산결과를 텍스트뷰에 설정
+        binding.tvResult.text = calculateExpression()
     }
 
     private fun operatorButtonClicked(operator: String) {
@@ -144,28 +132,40 @@ class MainActivity : AppCompatActivity() {
 
     }
 
-    private fun numberButtonClicked(number: String) {
+    private fun historyButtonClicked() {
+        binding.btnHistory.setOnClickListener {
+            binding.historyLayout.visibility = View.VISIBLE
 
-        // 방금 전 연산자를 추가했을 경우 빈칸을 하나 삽입하여 피연산자와 구분
-        if (isOperator) {
-            binding.tvExpression.append(" ")
+            // 디비를 불러오기 전에 기존에 있던 뷰를 모두 삭제
+            binding.historyLinearLayout.removeAllViews()
+
+            // 디비에서 데이터 가져와 뷰에 그리는 기능
+            Thread(Runnable {
+                db.historyDao().getAll().reversed().forEach {
+
+                    runOnUiThread {
+                        val historyView = HistoryRowBinding.inflate(LayoutInflater.from(this), null, false)
+
+                        historyView.tvExpression.text = it.expression
+                        historyView.tvResult.text = "= ${it.result}"
+                        // 뷰에 그리기(인자는 LayoutParams여야 함
+                        binding.historyLinearLayout.addView(historyView.root)
+                    }
+                }
+            }).start()
         }
-        isOperator = false
+    }
 
-        val expressionText = binding.tvExpression.text.split(" ")
+    private fun historyClearButtonClicked() {
+        binding.btnClearHistory.setOnClickListener {
+            // 뷰에서 기록 지우기
+            binding.historyLinearLayout.removeAllViews()
 
-        // 숫자가 15자리 이상 넘어갔을 경우 예외처리
-        if (expressionText.isNotEmpty() && expressionText.last().length >= 15) {
-            Toast.makeText(this, "15자리 까지만 사용할 수 있습니다.", Toast.LENGTH_SHORT).show()
-            return
-        } else if (expressionText.last() == "0") {
-            binding.tvExpression.text = number
-            return
+            // 디비에서 데이터 삭제
+            Thread(Runnable {
+                db.historyDao().deleteAll()
+            }).start()
         }
-
-        binding.tvExpression.append(number)
-        // 실시간 계산결과를 텍스트뷰에 설정
-        binding.tvResult.text = calculateExpression()
     }
 
     private fun saveButtonClicked() {
@@ -210,6 +210,15 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
+    private fun clearButtonClicked() {
+        binding.btnClear.setOnClickListener {
+            binding.tvExpression.text = ""
+            binding.tvResult.text = ""
+            isOperator = false
+            hasOperator = false
+        }
+    }
+
     private fun calculateExpression(): String {
         val expressionTexts = binding.tvExpression.text.split(" ")
 
@@ -234,15 +243,6 @@ class MainActivity : AppCompatActivity() {
             "÷" -> (exp1 / exp2).toString()
             "%" -> (exp1 % exp2).toString()
             else -> ""
-        }
-    }
-
-    private fun clearButtonClicked() {
-        binding.btnClear.setOnClickListener {
-            binding.tvExpression.text = ""
-            binding.tvResult.text = ""
-            isOperator = false
-            hasOperator = false
         }
     }
 }

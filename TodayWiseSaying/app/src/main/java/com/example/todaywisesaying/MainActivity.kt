@@ -32,7 +32,7 @@ class MainActivity : AppCompatActivity() {
 
         // 인앱 매개변수 기본 값 설정
         remoteConfig.setDefaultsAsync(R.xml.remote_config_defaults)
-
+        // Fetch & Activate
         remoteConfig.fetchAndActivate()
             .addOnCompleteListener { task ->
                 if(task.isSuccessful) {

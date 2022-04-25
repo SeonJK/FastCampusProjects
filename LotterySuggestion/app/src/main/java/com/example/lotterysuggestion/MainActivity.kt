@@ -76,7 +76,7 @@ class MainActivity : AppCompatActivity() {
                 return@setOnClickListener
             }
             // 텍스트뷰에 선택한 숫자 추가
-            val textView = numberTextViewList[pickNumberSet.size]
+            val textView: TextView = numberTextViewList[pickNumberSet.size]
             textView.text = binding.mnumberPicker.value.toString()
 
             // 숫자별 배경색 지정
@@ -97,13 +97,13 @@ class MainActivity : AppCompatActivity() {
                 else -> textView.setBackgroundResource(R.drawable.circle_green)
             }
         // 방법 2.
-        when(number) {
-            in 1..10 -> textView.background = ContextCompat.getDrawable(this, R.drawable.circle_yellow)
-            in 11..20 -> textView.background = ContextCompat.getDrawable(this, R.drawable.circle_blue)
-            in 21..30 -> textView.background = ContextCompat.getDrawable(this, R.drawable.circle_red)
-            in 31..40 -> textView.background = ContextCompat.getDrawable(this, R.drawable.circle_gray)
-            else -> textView.background = ContextCompat.getDrawable(this, R.drawable.circle_green)
-        }
+//        when(number) {
+//            in 1..10 -> textView.background = ContextCompat.getDrawable(this, R.drawable.circle_yellow)
+//            in 11..20 -> textView.background = ContextCompat.getDrawable(this, R.drawable.circle_blue)
+//            in 21..30 -> textView.background = ContextCompat.getDrawable(this, R.drawable.circle_red)
+//            in 31..40 -> textView.background = ContextCompat.getDrawable(this, R.drawable.circle_gray)
+//            else -> textView.background = ContextCompat.getDrawable(this, R.drawable.circle_green)
+//        }
     }
 
     // 초기화 기능
@@ -149,6 +149,7 @@ class MainActivity : AppCompatActivity() {
                 textView.text = number.toString()
                 setNumberBackground(number, textView)
             }
+
             didRun = true
         }
     }

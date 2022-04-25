@@ -46,7 +46,6 @@ class MainActivity : AppCompatActivity() {
 
         requestAudioPermission()
 
-        initVariables()
         initViews()
         bindViews()
     }
@@ -67,10 +66,6 @@ class MainActivity : AppCompatActivity() {
 
     private fun requestAudioPermission() {
         requestPermissions(requiredPermission, REQUEST_RECORD_AUDIO_PERMISSION)
-    }
-
-    private fun initVariables() {
-        state = State.BEFORE_RECORDING
     }
 
     private fun initViews() {
