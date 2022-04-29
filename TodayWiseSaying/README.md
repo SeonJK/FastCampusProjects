@@ -1,6 +1,6 @@
 # Today Wise Saying (오늘의 명언)
 
-## Stacks I use
+## Skills I use
 - Firebase RemoteConfig
 - ViewPager2
 - RecyclerView

@@ -1,6 +1,6 @@
 # Simple Web Browser
 
-## Stacks I use
+## Skills I use
 - WebView
 - WebViewClient
 - WebChromeClient

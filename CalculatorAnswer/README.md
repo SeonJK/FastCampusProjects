@@ -1,6 +1,6 @@
 # Simple Calculator (Based on Samsung_calculator)
 
-## Stacks I use
+## Skills I use
 - Room Database
 - Thread
 - runOnUiThread

@@ -1,6 +1,6 @@
 # Notification Receiver
 
-## Stacks I use
+## Skills I use
 - Firebase Cloud Messaging
 - NotificationCompat.Builder
 - ViewBinding

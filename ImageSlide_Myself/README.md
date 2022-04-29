@@ -1,6 +1,6 @@
 # Image Slide Frame
 
-## Stacks I use
+## Skills I use
 - requestPermission
 - ActivityResultLauncher(registreForActivityResult)
 - Timer

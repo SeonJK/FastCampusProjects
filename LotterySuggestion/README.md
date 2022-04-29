@@ -1,6 +1,6 @@
 # Lottery Suggestion
 
-## Stacks I use
+## Skills I use
 - ViewBinding
 - NumberPicker
 - Set, List

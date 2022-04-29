@@ -1,6 +1,6 @@
 # Pomodoro Timer
 
-## Stacks I use
+## Skills I use
 - SoundPool
 - SeekBar
 - CountDownTimer

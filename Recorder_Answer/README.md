@@ -1,6 +1,6 @@
 # Recorder
 
-## Stacks I use
+## Skills I use
 - MediaRecorder
 - MediaPlayer
 - CustomView

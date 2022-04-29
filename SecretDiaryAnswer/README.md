@@ -1,6 +1,6 @@
 # Secret Diary
 
-## Stacks I use
+## Skills I use
 - ViewBinding
 - SharedPreferences
 - Handler

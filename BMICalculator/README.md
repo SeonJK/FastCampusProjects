@@ -1,6 +1,6 @@
 # BMI Calculator
 
-## Stacks I use
+## Skills I use
 - ViewBinding
 - Intent
 - Toast
