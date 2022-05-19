@@ -1,7 +1,8 @@
-package com.example.bookreview
+package com.example.bookreview.model
 
+import android.os.Parcelable
 import com.google.gson.annotations.SerializedName
-import retrofit2.http.Url
+import kotlinx.parcelize.Parcelize
 
 /**
  * BookReview
@@ -20,8 +21,14 @@ data class BookItem(
 )
 
 // item 배열 속에서 가져올 것들
+@Parcelize
 data class Book(
+    @SerializedName("itemId")
+    val id: Long,
+
     @SerializedName("title")
+
+
     val title: String,
 
     @SerializedName("description")
@@ -29,4 +36,4 @@ data class Book(
 
     @SerializedName("coverSmallUrl")
     val imgUrl: String
-)
+): Parcelable

@@ -11,12 +11,14 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:hint="@string/hint"
+        android:inputType="text"
+        android:imeOptions="actionSearch"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
     <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/recyclerView"
+        android:id="@+id/bookListRecyclerView"
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:scrollbars="vertical"
@@ -24,6 +26,35 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/searchEditText"
-        tools:listitem="@layout/item_book"/>
+        tools:listitem="@layout/item_book" />
+
+    <LinearLayout
+        android:id="@+id/keywordLayout"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toBottomOf="@+id/searchEditText"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:visibility="gone"
+        android:orientation="vertical"
+        app:layout_constrainedHeight="true"
+        android:background="?attr/colorOnPrimary"
+        tools:visibility="visible">
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/keywordRecyclerView"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            tools:listitem="@layout/history_row"/>
+
+        <androidx.appcompat.widget.AppCompatButton
+            android:id="@+id/closeKeywordListButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@color/transparent"
+            android:layout_gravity="end"
+            android:text="@string/close"/>
+
+    </LinearLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>
