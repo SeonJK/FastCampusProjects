@@ -29,11 +29,6 @@ import retrofit2.converter.gson.GsonConverterFactory
 class MainActivity : AppCompatActivity() {
     val TAG: String = "로그"
 
-    companion object {
-        private const val API_KEY: String =
-            "47526898744FF03FF8113BD501F34FB4E2E19D7BB8076833B2D3F2F1442C8C23"
-    }
-
     object RetrofitBuilder {
         var service: RetrofitService
 
@@ -103,7 +98,7 @@ class MainActivity : AppCompatActivity() {
 
     private fun getBestSellerList() {
         // enqueue로 비동기 통신을 실행
-        RetrofitBuilder.service.getBestSellerList(API_KEY)
+        RetrofitBuilder.service.getBestSellerList(getString(R.string.api_key))
             .enqueue(object : Callback<BookItem> {
                 override fun onResponse(call: Call<BookItem>, response: Response<BookItem>) {
                     val books = response.body()
@@ -150,7 +145,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun searchBookList() {
-        RetrofitBuilder.service.searchBookList(API_KEY, binding.searchEditText.text.toString())
+        RetrofitBuilder.service.searchBookList(getString(R.string.api_key), binding.searchEditText.text.toString())
             .enqueue(object : Callback<BookItem> {
                 override fun onResponse(call: Call<BookItem>, response: Response<BookItem>) {
                     response.body()?.let {
