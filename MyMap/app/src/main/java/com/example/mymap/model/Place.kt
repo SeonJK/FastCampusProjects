@@ -1,5 +1,7 @@
 package com.example.mymap.model
 
+import android.os.Parcelable
+
 /**
  * MyMap
  * Created by SeonJK
