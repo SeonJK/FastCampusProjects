@@ -1,6 +1,8 @@
 package com.example.mymap.model
 
 import android.os.Parcelable
+import com.google.gson.annotations.SerializedName
+import kotlinx.parcelize.Parcelize
 
 /**
  * MyMap
@@ -8,7 +10,16 @@ import android.os.Parcelable
  * Date: 2022-05-23
  * Time: 오후 5:10
  * */
-data class LocationLatLng (
+@Parcelize
+data class Place (
+    @SerializedName("place_name")
+    val buildingName: String,
+    @SerializedName("address_name")
+    val address: String,
+    @SerializedName("road_address_name")
+    val roadAddress: String,
+    @SerializedName("x")
     val latitude: Float,
+    @SerializedName("y")
     val longitude: Float
-)
+): Parcelable

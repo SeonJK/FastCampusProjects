@@ -1,5 +1,7 @@
 package com.example.mymap.model
 
+import com.google.gson.annotations.SerializedName
+
 /**
  * MyMap
  * Created by SeonJK
@@ -7,7 +9,11 @@ package com.example.mymap.model
  * Time: 오후 5:09
  * */
 data class SearchResult (
-    val fullAddress: String,
-    val buildingName: String,
-    val locationLatLng: LocationLatLng
+    @SerializedName("meta") val meta: PlaceMeta,
+    @SerializedName("documents") val place: List<Place>
 )
+
+data class PlaceMeta (
+    @SerializedName("total_count")
+    val totalCount: Int
+    )

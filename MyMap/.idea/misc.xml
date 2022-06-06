@@ -4,7 +4,9 @@
     <option name="filePathToZoomLevelMap">
       <map>
         <entry key="..\:/Users/tjswh/AndroidStudioProjects/FastCampusProjects/MyMap/app/src/main/res/layout/activity_main.xml" value="0.18385416666666668" />
+        <entry key="..\:/Users/tjswh/AndroidStudioProjects/FastCampusProjects/MyMap/app/src/main/res/layout/activity_map.xml" value="0.1" />
         <entry key="..\:/Users/tjswh/AndroidStudioProjects/FastCampusProjects/MyMap/app/src/main/res/layout/item_location.xml" value="0.18385416666666668" />
+        <entry key="..\:/Users/tjswh/AndroidStudioProjects/FastCampusProjects/MyMap/app/src/main/res/xml/network_security_config.xml" value="0.1" />
       </map>
     </option>
   </component>

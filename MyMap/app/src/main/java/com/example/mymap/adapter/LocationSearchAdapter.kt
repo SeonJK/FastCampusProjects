@@ -6,6 +6,7 @@ import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.example.mymap.databinding.ItemLocationBinding
+import com.example.mymap.model.Place
 import com.example.mymap.model.SearchResult
 
 /**
@@ -14,15 +15,22 @@ import com.example.mymap.model.SearchResult
  * Date: 2022-05-23
  * Time: 오후 5:46
  * */
-class LocationSearchAdapter :
-    ListAdapter<SearchResult, LocationSearchAdapter.ViewHolder>(diffUtil) {
+class LocationSearchAdapter(
+    private val itemClickedListener: (Place) -> Unit
+) : ListAdapter<Place, LocationSearchAdapter.ViewHolder>(diffUtil) {
 
     inner class ViewHolder(
         private val binding: ItemLocationBinding,
     ) : RecyclerView.ViewHolder(binding.root) {
-        fun bind(result: SearchResult) {
-            binding.buildingTextView.text = result.buildingName
-            binding.locationTextView.text = result.fullAddress
+        fun bind(place: Place) {
+            binding.buildingTextView.text = place.buildingName
+            // 도로명 주소가 없을 때 동주소가 나올 수 있도록 설정
+            binding.locationTextView.text =
+                if(place.roadAddress != "") place.roadAddress else place.address
+
+            binding.root.setOnClickListener {
+                itemClickedListener(place)
+            }
         }
     }
 
@@ -40,19 +48,19 @@ class LocationSearchAdapter :
     }
 
     companion object {
-        val diffUtil = object : DiffUtil.ItemCallback<SearchResult>() {
+        val diffUtil = object : DiffUtil.ItemCallback<Place>() {
             override fun areItemsTheSame(
-                oldItem: SearchResult,
-                newItem: SearchResult,
+                oldItem: Place,
+                newItem: Place,
             ): Boolean {
                 return oldItem == newItem
             }
 
             override fun areContentsTheSame(
-                oldItem: SearchResult,
-                newItem: SearchResult,
+                oldItem: Place,
+                newItem: Place,
             ): Boolean {
-                return oldItem.fullAddress == newItem.fullAddress
+                return oldItem.address == newItem.address
             }
 
         }

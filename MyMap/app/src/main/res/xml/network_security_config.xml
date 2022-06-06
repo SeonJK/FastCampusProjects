@@ -1,4 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
-<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+<!-- http 통신 허용 -->
+<network-security-config>
+<!--    <base-config cleartextTrafficPermitted="true">-->
+<!--        <trust-anchors>-->
+<!--            <certificates src="system" />-->
+<!--        </trust-anchors>-->
+<!--    </base-config>-->
 
-</PreferenceScreen>
+    <domain-config cleartextTrafficPermitted="true">
+        <domain includeSubdomains="true">
+            maps.daum-img.net
+        </domain>
+    </domain-config>
+</network-security-config>
