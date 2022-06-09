@@ -126,7 +126,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun openPermissionPopup() {
-        // TODO: 알람 다이얼로그 생성
+        // 알람 다이얼로그 생성
         AlertDialog.Builder(this)
             .setTitle("권한 알림")
             .setMessage("외부 저장소 사용을 위해 권한이 필요합니다.")
