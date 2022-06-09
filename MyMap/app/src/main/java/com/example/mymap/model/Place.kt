@@ -19,7 +19,7 @@ data class Place (
     @SerializedName("road_address_name")
     val roadAddress: String,
     @SerializedName("x")
-    val latitude: Float,
+    val latitude: Double,
     @SerializedName("y")
-    val longitude: Float
+    val longitude: Double
 ): Parcelable

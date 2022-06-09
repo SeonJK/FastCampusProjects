@@ -62,7 +62,7 @@ class MainActivity : AppCompatActivity() {
 
     private fun searchLocation() {
         binding.searchButton.setOnClickListener {
-            // TODO: Retrofit 통신
+            // Retrofit 통신
             service.searchKeyword(getString(R.string.rest_api_key), binding.searchEditText.text.toString())
                 .enqueue(object : Callback<SearchResult> {
                     @SuppressLint("SetTextI18n")
