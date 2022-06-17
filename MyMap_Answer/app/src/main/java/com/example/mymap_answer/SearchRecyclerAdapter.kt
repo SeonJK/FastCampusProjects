@@ -5,6 +5,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.example.mymap_answer.databinding.ViewholderSearchResultItemBinding
+import com.example.mymap_answer.model.SearchResultEntity
 
 /**
  * MyMap_Answer
@@ -12,19 +13,25 @@ import com.example.mymap_answer.databinding.ViewholderSearchResultItemBinding
  * Date: 2022-05-26
  * Time: 오전 9:37
  * */
-class SearchRecyclerAdapter :
+class SearchRecyclerAdapter() :
     RecyclerView.Adapter<SearchRecyclerAdapter.SearchResultItemViewHolder>() {
-    private var searchResultList: List<Any> = listOf()
-    lateinit var searchResultClickListener: (Any) -> Unit
+
+    private var searchResultList: List<SearchResultEntity> = listOf()
+    private lateinit var searchResultClickListener: (SearchResultEntity) -> Unit
 
     class SearchResultItemViewHolder(
-        val binding: ViewholderSearchResultItemBinding,
-        val searchResultClickListener: (Any) -> Unit,
+        private val binding: ViewholderSearchResultItemBinding,
+        val searchResultClickListener: (SearchResultEntity) -> Unit,
     ) : RecyclerView.ViewHolder(binding.root) {
-        fun bindData(data: Any) = with(binding) {
-            titleTextView.text = "제목"
-            subTextView.text = "부제목"
+        fun bindData(data: SearchResultEntity) = with(binding) {
+            titleTextView.text = data.name
+            subTextView.text = data.fullAddress
+        }
 
+        fun bindViews(data: SearchResultEntity) {
+            binding.root.setOnClickListener {
+                searchResultClickListener(data)
+            }
         }
     }
 
@@ -38,11 +45,18 @@ class SearchRecyclerAdapter :
         return SearchResultItemViewHolder(view, searchResultClickListener)
     }
 
-    override fun onBindViewHolder(holder: SearchResultItemViewHolder, position: Int): Unit {
+    override fun onBindViewHolder(holder: SearchResultItemViewHolder, position: Int) {
         holder.bindData(searchResultList[position])
+        holder.bindViews(searchResultList[position])
     }
 
-    override fun getItemCount(): Int {
-        TODO("Not yet implemented")
+    override fun getItemCount(): Int = searchResultList.size
+
+    fun setSearchResultList(
+        searchResultList: List<SearchResultEntity>,
+        searchResultClickListener: (SearchResultEntity) -> Unit,
+    ) {
+        this.searchResultList = searchResultList
+        this.searchResultClickListener = searchResultClickListener
     }
 }
