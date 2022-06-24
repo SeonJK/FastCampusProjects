@@ -52,11 +52,10 @@ class SearchRecyclerAdapter() :
 
     override fun getItemCount(): Int = searchResultList.size
 
-    fun setSearchResultList(
-        searchResultList: List<SearchResultEntity>,
-        searchResultClickListener: (SearchResultEntity) -> Unit,
-    ) {
+    fun setSearchResultList(searchResultList: List<SearchResultEntity>, searchResultClickListener: (SearchResultEntity) -> Unit, ) {
         this.searchResultList = searchResultList
         this.searchResultClickListener = searchResultClickListener
+
+        notifyDataSetChanged()
     }
 }
