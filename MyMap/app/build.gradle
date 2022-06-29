@@ -57,4 +57,10 @@ dependencies {
 
     // KakaoMap API
     implementation files('libs/libDaumMapAndroid.jar')
+
+    // FusedLocation API
+    implementation 'com.google.android.gms:play-services-location:20.0.0'
+
+    // TedPermission Library
+    implementation 'io.github.ParkSangGwon:tedpermission-normal:3.3.0'
 }

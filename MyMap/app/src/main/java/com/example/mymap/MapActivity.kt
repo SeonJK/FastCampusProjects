@@ -1,36 +1,47 @@
 package com.example.mymap
 
 import android.Manifest
-import android.app.Activity
-import android.content.Intent
+import android.annotation.SuppressLint
+import android.content.Context
 import android.content.pm.PackageManager
+import android.location.Location
 import android.location.LocationManager
 import android.os.Bundle
-import android.os.Parcelable
 import android.util.Log
 import android.widget.Toast
-import androidx.activity.result.ActivityResultLauncher
-import androidx.activity.result.contract.ActivityResultContracts
-import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import com.example.mymap.databinding.ActivityMapBinding
 import com.example.mymap.model.Place
+import com.google.android.gms.common.ConnectionResult
+import com.google.android.gms.common.api.GoogleApiClient
+import com.google.android.gms.common.api.ResolvableApiException
+import com.google.android.gms.location.*
+import com.google.android.gms.tasks.Task
+import com.gun0912.tedpermission.PermissionListener
+import com.gun0912.tedpermission.normal.TedPermission
 import net.daum.mf.map.api.MapPOIItem
 import net.daum.mf.map.api.MapPoint
 import net.daum.mf.map.api.MapView
 
-class MapActivity : AppCompatActivity(), MapView.CurrentLocationEventListener {
+class MapActivity : AppCompatActivity(),
+        GoogleApiClient.ConnectionCallbacks,
+        GoogleApiClient.OnConnectionFailedListener {
+
     val TAG: String = "로그"
 
     companion object {
         private const val REQUEST_CODE = 101
-        private const val GPS_REQUEST_CODE = 103
+        private const val REQUEST_CHECK_SETTINGS = 103
     }
+
+//    private var isCurrentLocationSet = false
 
     private lateinit var binding: ActivityMapBinding
     private lateinit var mapView: MapView
+    private lateinit var locationManager: LocationManager
     private lateinit var itemMapPoint: MapPoint
-    private lateinit var activityResultLauncher: ActivityResultLauncher<Intent>
+    private lateinit var fusedLocationClient: FusedLocationProviderClient
+    private lateinit var googleApiClient: GoogleApiClient
 
     private val requiredPermission = arrayOf(
         Manifest.permission.ACCESS_FINE_LOCATION,
@@ -42,76 +53,70 @@ class MapActivity : AppCompatActivity(), MapView.CurrentLocationEventListener {
         binding = ActivityMapBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        // activityReusltLauncher 초기화
-        activityResultLauncher =
-            registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
-                // 정상적인 결과코드를 반환하지 않았을 경우 예외처리
-                if (result.resultCode != Activity.RESULT_OK) {
-                    Toast.makeText(this, "GPS 권한이 허용되지 않았습니다.", Toast.LENGTH_SHORT).show()
-                } else {
-                    // 정상적으로 GPS 권한이 허용되었을 경우
-                    if (checkLocationServiceStatus()) {
-                        Log.d(TAG, "MapActivity - GPS 활성화되었음")
-                        checkPermission()
-                    }
-                }
-            }
+        // 권한 확인
+        checkLocationPermission()
+        // LocationManager 초기화 확인
+//        checkLocationServiceStatus()
 
-        checkPermission()
+        googleApiClient = GoogleApiClient.Builder(this)
+            .addApi(LocationServices.API)
+            .addConnectionCallbacks(this)
+            .addOnConnectionFailedListener(this)
+            .build()
+        // fusedLocation 객체 생성
+        fusedLocationClient = LocationServices.getFusedLocationProviderClient(this)
 
+        googleApiClient.connect()
+
+        initMapView()
         initFloatingActionButton()
     }
 
-    override fun onRequestPermissionsResult(
-        requestCode: Int,
-        permissions: Array<out String>,
-        grantResults: IntArray,
-    ) {
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
+    override fun onResume() {
+        super.onResume()
 
-        when(requestCode) {
-            REQUEST_CODE -> {
-                if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                    // 권한이 허용되었을 때
-                    initMapView()
-                } else {
-                    // 권한이 거부되었을 때
-                    Toast.makeText(this, "권한이 허용되지 않았습니다. 위치 권한을 허용해주세요.", Toast.LENGTH_SHORT).show()
-                }
-            }
-            else -> {
-                // 비정상적인 requestCode가 들어왔을 때 동작
-            }
+    }
+
+    private fun checkLocationPermission() {
+        if (checkSelfPermission(Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            TedPermission.create()
+                .setPermissionListener(permissionListener)
+                .setDeniedMessage("권한 거절")
+                .setPermissions(Manifest.permission.READ_CONTACTS, Manifest.permission.ACCESS_FINE_LOCATION)
+                .check()
         }
     }
 
     private fun checkLocationServiceStatus(): Boolean {
-        val locationManager = getSystemService(LOCATION_SERVICE) as LocationManager
+        // locationManager가 초기화되어있지 않으면
+        if (::locationManager.isInitialized.not()) {
+            locationManager = getSystemService(Context.LOCATION_SERVICE) as LocationManager
+            Log.d(TAG, "MapActivity - checkLocationServiceStatus() called")
+        }
 
         return locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)
-                || locationManager.isProviderEnabled(LocationManager.NETWORK_PROVIDER)
     }
 
-    private fun checkPermission() {
-        // 권한 요청
-        when {
-            // 권한이 허용되어 있을 때
-            checkSelfPermission(Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED
-            -> {
-                initMapView()
-            }
-
-            // 권한이 허용되지 않았을 때 교육용 팝업을 띄운 후 권한 팝업을 띄움
-            shouldShowRequestPermissionRationale(Manifest.permission.ACCESS_FINE_LOCATION) -> {
-                openPermissionPopup() // 교육용 팝업 기능 함수
-            }
-
-            // 권한 요청
-            else -> {
-                requestPermissions(requiredPermission, REQUEST_CODE)
-            }
-        }
-    }
+//    private fun checkPermission() {
+//        // 권한 요청
+//        when {
+//            // 권한이 허용되어 있을 때
+//            checkSelfPermission(Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED
+//            -> {
+//                initMapView()
+//            }
+//
+//            // 권한이 허용되지 않았을 때 교육용 팝업을 띄운 후 권한 팝업을 띄움
+//            shouldShowRequestPermissionRationale(Manifest.permission.ACCESS_FINE_LOCATION) -> {
+//                openPermissionPopup() // 교육용 팝업 기능 함수
+//            }
+//
+//            // 권한 요청
+//            else -> {
+//                requestPermissions(requiredPermission, REQUEST_CODE)
+//            }
+//        }
+//    }
 
     private fun initMapView() {
         // 지도 레이아웃 생성
@@ -120,7 +125,11 @@ class MapActivity : AppCompatActivity(), MapView.CurrentLocationEventListener {
 
         // 인텐트로 넘어온 place데이터 변수 저장
         val model = intent.getParcelableExtra<Place>("place")
-        itemMapPoint = MapPoint.mapPointWithGeoCoord(model!!.longitude, model.latitude)
+        setPin(model)
+    }
+
+    private fun setPin(model: Place?) {
+        itemMapPoint = MapPoint.mapPointWithGeoCoord(model!!.latitude, model.longitude)
         // 지도의 중심점 변경 + 줌 레벨 변경
         mapView.setMapCenterPointAndZoomLevel(itemMapPoint, 2, true)
 
@@ -137,45 +146,81 @@ class MapActivity : AppCompatActivity(), MapView.CurrentLocationEventListener {
 
     private fun initFloatingActionButton() {
         binding.currenLocationFAB.setOnClickListener {
-            mapView.setCurrentLocationEventListener(this)
-            mapView.currentLocationTrackingMode =
-                MapView.CurrentLocationTrackingMode.TrackingModeOnWithoutHeading
-            mapView.setShowCurrentLocationMarker(true)
+            checkLocationServiceStatus()
+            createLocationRequest()
         }
     }
 
-    private fun openPermissionPopup() {
-        AlertDialog.Builder(this)
-            .setTitle("권한 알림")
-            .setMessage("위치를 받아오기 위해 권한이 필요합니다.")
-            .setPositiveButton("허용") { _,_ ->
-                val callGPSSettingIntent = Intent(android.provider.Settings.ACTION_LOCATION_SOURCE_SETTINGS)
-                activityResultLauncher.launch(callGPSSettingIntent)
+    private fun createLocationRequest() {
+        // 위치 요청 설정
+        val locationRequest = LocationRequest.create().apply {
+            interval = 10000            // 위치 업데이트 수신 간격 (ms)
+            fastestInterval = 5000      // 가장 빠른 위치 업데이트 처리 간격 (ms)
+            priority = LocationRequest.PRIORITY_HIGH_ACCURACY
+            // ACCESS_FINE_LOCATION 권한 + 빠른 업데이트 간격 5000 + 우선순위 HIGH_ACCURACY 조합
+            // => 정확한 위치 반환, 실시간으로 위치 표시하는 앱에 적합
+        }
+
+        // 위치 설정을 위한 빌더
+        val builder = LocationSettingsRequest.Builder()
+            .addLocationRequest(locationRequest)
+
+        val client: SettingsClient = LocationServices.getSettingsClient(this)
+        val task: Task<LocationSettingsResponse> = client.checkLocationSettings(builder.build())
+
+        task.addOnSuccessListener {
+            requestPermissions(requiredPermission, REQUEST_CODE)
+            Log.d(TAG, "MapActivity - createLocationRequest() called")
+        }
+
+        task.addOnFailureListener { exception ->
+            if (exception is ResolvableApiException) {
+                try {
+                    exception.startResolutionForResult(this, REQUEST_CHECK_SETTINGS)
+                } catch (e: Exception) {
+                    e.printStackTrace()
+                }
             }
-            .setNegativeButton("거부") { dialog,_ ->
-                dialog.cancel()
+        }
+    }
+
+    // 위치 정보 제공자가 사용 가능 상태가 되었을 때
+    @SuppressLint("MissingPermission")
+    override fun onConnected(p0: Bundle?) {
+        fusedLocationClient.lastLocation
+            .addOnSuccessListener { location: Location? ->
+                location?.let {
+                    Log.d(TAG, "MapActivity - onConnected() called :: 위도=${it.latitude} 경도=${it.longitude}")
+
+                    val model = Place(
+                        latitude = it.latitude,
+                        longitude = it.longitude,
+                        buildingName = "현재 위치",
+                        address = "null",
+                        roadAddress = "null"
+                    )
+                    setPin(model)
+                }
             }
-            .create()
-            .show()
     }
 
-    override fun onCurrentLocationUpdate(p0: MapView?, mapPoint: MapPoint?, accuracyInMeters: Float) {
-        val mapPointGeo = mapPoint?.mapPointGeoCoord
-        Log.d(TAG, String.format("MapActivity - onCurrentLocationUpdate() called :: (%f, %f)",
-            mapPointGeo?.latitude, mapPointGeo?.longitude))
-        itemMapPoint = MapPoint.mapPointWithGeoCoord(mapPointGeo!!.longitude, mapPointGeo.latitude)
-        mapView.setMapCenterPoint(itemMapPoint, true)
-    }
-
-    override fun onCurrentLocationDeviceHeadingUpdate(p0: MapView?, p1: Float) {
+    // 함수와 사용 불가능 상태가 되었을 때
+    override fun onConnectionSuspended(p0: Int) {
         TODO("Not yet implemented")
     }
 
-    override fun onCurrentLocationUpdateFailed(p0: MapView?) {
+    // 위치 정보 제공자를 얻지 못할 때
+    override fun onConnectionFailed(p0: ConnectionResult) {
         TODO("Not yet implemented")
     }
 
-    override fun onCurrentLocationUpdateCancelled(p0: MapView?) {
-        TODO("Not yet implemented")
+    private val permissionListener = object : PermissionListener {
+        override fun onPermissionGranted() {
+            Toast.makeText(applicationContext, "권한 허가됨", Toast.LENGTH_SHORT).show()
+        }
+
+        override fun onPermissionDenied(deniedPermissions: MutableList<String>?) {
+            Toast.makeText(applicationContext, "권한 거부됨", Toast.LENGTH_SHORT).show()
+        }
     }
 }

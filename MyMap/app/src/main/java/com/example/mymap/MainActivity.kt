@@ -63,7 +63,7 @@ class MainActivity : AppCompatActivity() {
     private fun searchLocation() {
         binding.searchButton.setOnClickListener {
             // Retrofit 통신
-            service.searchKeyword(getString(R.string.rest_api_key), binding.searchEditText.text.toString())
+            service.searchKeyword(key = getString(R.string.rest_api_key), query = binding.searchEditText.text.toString())
                 .enqueue(object : Callback<SearchResult> {
                     @SuppressLint("SetTextI18n")
                     override fun onResponse(
@@ -71,7 +71,7 @@ class MainActivity : AppCompatActivity() {
                         response: Response<SearchResult>,
                     ) {
                         if (response.isSuccessful.not()) {
-                            // 실패에 대한 예외처리
+                            // 응답코드가 있는 실패에 대한 예외처리
                             Log.d(TAG, "onResponse() called :: NOT SUCCESS!!")
                             return
                         }
@@ -87,6 +87,7 @@ class MainActivity : AppCompatActivity() {
 
                     }
 
+                    // 인터넷 장애로 인한 통신실패일 경우
                     override fun onFailure(call: Call<SearchResult>, t: Throwable) {
                         Log.d(TAG, "apiCallback - onFailure() called :: ${t.message.toString()}")
                     }

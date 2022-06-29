@@ -11,7 +11,7 @@ import kotlinx.parcelize.Parcelize
  * Time: 오후 5:10
  * */
 @Parcelize
-data class Place (
+data class Place(
     @SerializedName("place_name")
     val buildingName: String,
     @SerializedName("address_name")
@@ -19,7 +19,7 @@ data class Place (
     @SerializedName("road_address_name")
     val roadAddress: String,
     @SerializedName("x")
-    val latitude: Double,
+    val longitude: Double,
     @SerializedName("y")
-    val longitude: Double
+    val latitude: Double
 ): Parcelable
