@@ -1,3 +1,5 @@
+import com.android.build.gradle.internal.cxx.configure.gradleLocalProperties
+
 plugins {
     id("com.android.application")
     id("org.jetbrains.kotlin.android")
@@ -15,6 +17,18 @@ android {
         versionName = "1.0"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+
+        val githubClientId: String = gradleLocalProperties(rootDir).getProperty("GITHUB_CLIENT_ID")
+        buildConfigField("String", "GITHUB_CLIENT_ID", "\"$githubClientId\"")
+
+        val githubClientSecret: String = gradleLocalProperties(rootDir).getProperty("GITHUB_CLIENT_SECRET")
+        buildConfigField("String", "GITHUB_CLIENT_SECRET", "\"$githubClientSecret\"")
+    }
+
+    buildFeatures {
+        buildConfig = true
+
+        viewBinding = true
     }
 
     buildTypes {
@@ -44,4 +58,6 @@ dependencies {
     testImplementation("junit:junit:4.13.2")
     androidTestImplementation("androidx.test.ext:junit:1.1.5")
     androidTestImplementation("androidx.test.espresso:espresso-core:3.5.1")
+
+    implementation("androidx.browser:browser:1.8.0")
 }
