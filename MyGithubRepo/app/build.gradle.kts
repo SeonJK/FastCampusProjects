@@ -79,8 +79,12 @@ dependencies {
     // Room DB
     val room_version = "2.6.1"
     implementation("androidx.room:room-runtime:$room_version")
-    annotationProcessor("androidx.room:room-compiler:$room_version")
     ksp("androidx.room:room-compiler:$room_version")
     implementation("androidx.room:room-ktx:$room_version")
+
+    // Glide
+    val glide_version = "4.14.2"
+    implementation("com.github.bumptech.glide:glide:$glide_version")
+    ksp("com.github.bumptech.glide:ksp:$glide_version")
 
 }

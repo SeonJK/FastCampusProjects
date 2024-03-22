@@ -1,4 +1,4 @@
-package com.seonjk.mygithubrepo
+package com.seonjk.mygithubrepo.ui.activity
 
 import android.content.Intent
 import android.net.Uri
@@ -8,6 +8,7 @@ import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.browser.customtabs.CustomTabsIntent
 import androidx.core.view.isVisible
+import com.seonjk.mygithubrepo.BuildConfig
 import com.seonjk.mygithubrepo.databinding.ActivitySigninBinding
 import com.seonjk.mygithubrepo.utility.AuthTokenProvider
 import com.seonjk.mygithubrepo.utility.RetrofitUtil
@@ -35,13 +36,17 @@ class SignInActivity : AppCompatActivity(), CoroutineScope {
         setContentView(binding.root)
 
         if (authTokenProvider.token.isNullOrEmpty().not()) {
-            startActivity(Intent(this, MainActivity::class.java).apply {
-                addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK)
-                addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-            })
+            startMainActivity()
         } else {
             initViews()
         }
+    }
+
+    private fun startMainActivity() {
+        startActivity(Intent(this, MainActivity::class.java).apply {
+            addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK)
+            addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+        })
     }
 
     override fun onDestroy() {
@@ -77,6 +82,10 @@ class SignInActivity : AppCompatActivity(), CoroutineScope {
                 showProgress(true)
                 getAccessToken(code)
                 showProgress(false)
+
+                if (authTokenProvider.token.isNullOrEmpty().not()) {
+                    startMainActivity()
+                }
             }
         }
     }
@@ -102,7 +111,22 @@ class SignInActivity : AppCompatActivity(), CoroutineScope {
             if (accessToken.isNotEmpty()) {
                 authTokenProvider.updateToken(accessToken)
             } else {
-                Toast.makeText(this@SignInActivity, "accessToken not exist.", Toast.LENGTH_SHORT).show()
+                withContext(Dispatchers.Main) {
+                    Toast.makeText(
+                        this@SignInActivity,
+                        "accessToken not exist.",
+                        Toast.LENGTH_SHORT
+                    ).show()
+                }
+            }
+        } else {
+            Log.e("jkseon", "response Failed")
+            withContext(Dispatchers.Main) {
+                Toast.makeText(
+                    this@SignInActivity,
+                    "Github Login Failed",
+                    Toast.LENGTH_SHORT
+                ).show()
             }
         }
     }

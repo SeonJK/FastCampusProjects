@@ -1,9 +1,11 @@
 package com.seonjk.mygithubrepo.data.database
 
+import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
 
+@Dao
 interface RepositoryDao {
 
     @Insert
@@ -14,6 +16,9 @@ interface RepositoryDao {
 
     @Query("SELECT * FROM githubrepository")
     suspend fun getHistory(): List<GithubRepoEntity>
+
+    @Query("SELECT * FROM githubrepository WHERE fullName = :repoName")
+    suspend fun getRepository(repoName: String): GithubRepoEntity?
 
     @Query("DELETE FROM githubrepository WHERE fullName = :repoName")
     suspend fun remove(repoName: String)
