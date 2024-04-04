@@ -17,11 +17,11 @@ internal class ListViewModel(
     private val deleteAllToDoItemUseCase: DeleteAllToDoItemUseCase
 ) : BaseViewModel() {
 
-    private var _taskList = MutableLiveData<TaskListState>(TaskListState.UnInitialized)
-    val taskList: LiveData<TaskListState> = _taskList
+    private var _taskListLiveData = MutableLiveData<TaskListState>(TaskListState.Uninitialized)
+    val taskListLiveData: LiveData<TaskListState> = _taskListLiveData
     override fun fetchData(): Job = viewModelScope.launch {
-        _taskList.postValue(TaskListState.Loading)
-        _taskList.postValue(TaskListState.Success(getToDoListUseCase()))
+        _taskListLiveData.postValue(TaskListState.Loading)
+        _taskListLiveData.postValue(TaskListState.Success(getToDoListUseCase()))
     }
 
     fun updateEntity(toDoEntity: ToDoEntity) = viewModelScope.launch {
@@ -29,8 +29,8 @@ internal class ListViewModel(
     }
 
     fun deleteAll() = viewModelScope.launch{
-        _taskList.postValue(TaskListState.Loading)
+        _taskListLiveData.postValue(TaskListState.Loading)
         deleteAllToDoItemUseCase()
-        _taskList.postValue(TaskListState.Success(getToDoListUseCase()))
+        _taskListLiveData.postValue(TaskListState.Success(getToDoListUseCase()))
     }
 }

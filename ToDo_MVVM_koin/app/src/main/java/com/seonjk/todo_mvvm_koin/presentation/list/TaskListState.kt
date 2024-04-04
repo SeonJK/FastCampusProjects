@@ -1,7 +1,7 @@
 package com.seonjk.todo_mvvm_koin.presentation.list
 
 sealed class TaskListState {
-    object UnInitialized: TaskListState()
+    object Uninitialized: TaskListState()
 
     object Loading: TaskListState()
 

@@ -15,7 +15,8 @@ class TestToDoRepository : ToDoRepository {
     }
 
     override suspend fun insertToDoItem(toDoEntity: ToDoEntity): Long {
-        TODO("Not yet implemented")
+        this.toDoList.add(toDoEntity)
+        return toDoEntity.id
     }
 
     override suspend fun insertToDoList(toDoList: List<ToDoEntity>) {
@@ -28,7 +29,8 @@ class TestToDoRepository : ToDoRepository {
     }
 
     override suspend fun deleteToDoItem(id: Long) {
-        TODO("Not yet implemented")
+        val foundToDoEntity = toDoList.find { it.id == id }
+        this.toDoList.removeAt(toDoList.indexOf(foundToDoEntity))
     }
 
     override suspend fun deleteAll() {

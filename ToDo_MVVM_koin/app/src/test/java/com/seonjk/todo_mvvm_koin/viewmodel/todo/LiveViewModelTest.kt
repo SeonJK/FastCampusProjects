@@ -6,18 +6,26 @@ import com.seonjk.todo_mvvm_koin.domain.usecase.InsertToDoLIstUseCase
 import com.seonjk.todo_mvvm_koin.presentation.list.ListViewModel
 import com.seonjk.todo_mvvm_koin.presentation.list.TaskListState
 import com.seonjk.todo_mvvm_koin.viewmodel.ViewModelTest
-import kotlinx.coroutines.test.runBlockingTest
 import kotlinx.coroutines.test.runTest
 import org.junit.Before
 import org.junit.Test
 import org.koin.test.inject
 
+
+/**
+ * [ListViewModel]을 테스트하기 위한 Unit Test Class
+ *
+ * 1. initData()
+ * 2. test viewModel fetch
+ * 3. test Item Update
+ * 4. test Item Delete All
+ * */
 internal class LiveViewModelTest : ViewModelTest() {
 
 
     private val viewModel: ListViewModel by inject()
 
-    private val insertToDoLIstUseCase: InsertToDoLIstUseCase by inject()
+    private val insertToDoListUseCase: InsertToDoLIstUseCase by inject()
     private val getToDoItemUseCase: GetToDoItemUseCase by inject()
 
     private val mockList = (0 until 10).map {
@@ -35,17 +43,17 @@ internal class LiveViewModelTest : ViewModelTest() {
     }
 
     private fun initData() = runTest {
-        insertToDoLIstUseCase(mockList)
+        insertToDoListUseCase(mockList)
     }
 
     // Test : 입력된 데이터를 불러와서 검증
     @Test
     fun `test viewModel fetch`(): Unit = runTest {
-        val testObservable = viewModel.taskList.test()
+        val testObservable = viewModel.taskListLiveData.test()
         viewModel.fetchData()
         testObservable.assertValueSequence(
             listOf(
-                TaskListState.UnInitialized,
+                TaskListState.Uninitialized,
                 TaskListState.Loading,
                 TaskListState.Success(mockList)
             )
@@ -68,11 +76,11 @@ internal class LiveViewModelTest : ViewModelTest() {
     // Test : 데이터를 다 날렸을 때 빈 상태로 보여지는가
     @Test
     fun `test Item Delete All`(): Unit = runTest {
-        val testObservable = viewModel.taskList.test()
+        val testObservable = viewModel.taskListLiveData.test()
         viewModel.deleteAll()
         testObservable.assertValueSequence(
             listOf(
-                TaskListState.UnInitialized,
+                TaskListState.Uninitialized,
                 TaskListState.Loading,
                 TaskListState.Success(listOf())
             )
