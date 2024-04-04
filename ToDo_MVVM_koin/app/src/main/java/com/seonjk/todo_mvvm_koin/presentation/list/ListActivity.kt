@@ -29,14 +29,14 @@ internal class ListActivity : BaseActivity<ListViewModel>(), CoroutineScope {
     }
 
     override fun observeData() {
-        viewModel.taskList.observe(this) { taskListState ->
-            when(taskListState) {
-                is TaskListState.UnInitialized -> initViews(binding)
-                is TaskListState.Loading -> handleLoadingState()
-                is TaskListState.Success -> handleSuccessState(taskListState)
-                is TaskListState.Error -> { /* do Nothing */ }
-            }
-        }
+//        viewModel.taskList.observe(this) { taskListState ->
+//            when(taskListState) {
+//                is TaskListState.UnInitialized -> initViews(binding)
+//                is TaskListState.Loading -> handleLoadingState()
+//                is TaskListState.Success -> handleSuccessState(taskListState)
+//                is TaskListState.Error -> { /* do Nothing */ }
+//            }
+//        }
     }
 
     private fun initViews(binding: ActivityListBinding) = with(binding) {
