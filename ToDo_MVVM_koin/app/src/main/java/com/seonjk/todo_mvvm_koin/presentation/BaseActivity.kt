@@ -9,20 +9,20 @@ internal abstract class BaseActivity<VM: BaseViewModel> : AppCompatActivity() {
 
     abstract val viewModel: VM
 
-    private lateinit var job: Job
+    private lateinit var fetchJob: Job
 
     override fun onCreate(savedInstanceState: Bundle?, persistentState: PersistableBundle?) {
         super.onCreate(savedInstanceState, persistentState)
 
-        job = viewModel.fetchData()
+        fetchJob = viewModel.fetchData()
         observeData()
     }
 
     abstract fun observeData()
 
     override fun onDestroy() {
-        if (job.isActive) {
-            job.cancel()
+        if (fetchJob.isActive) {
+            fetchJob.cancel()
         }
         super.onDestroy()
     }
