@@ -6,6 +6,7 @@ import androidx.lifecycle.viewModelScope
 import com.seonjk.todo_mvvm_koin.data.entity.ToDoEntity
 import com.seonjk.todo_mvvm_koin.domain.usecase.DeleteToDoItemUseCase
 import com.seonjk.todo_mvvm_koin.domain.usecase.GetToDoItemUseCase
+import com.seonjk.todo_mvvm_koin.domain.usecase.InsertToDoItemUseCase
 import com.seonjk.todo_mvvm_koin.domain.usecase.UpdateToDoItemUseCase
 import com.seonjk.todo_mvvm_koin.presentation.BaseViewModel
 import kotlinx.coroutines.Job
@@ -16,7 +17,8 @@ internal class DetailViewModel(
     var id: Long = -1,
     private val getToDoItemUseCase: GetToDoItemUseCase,
     private val deleteToDoItemUseCase: DeleteToDoItemUseCase,
-    private val updateToDoItemUseCase: UpdateToDoItemUseCase
+    private val updateToDoItemUseCase: UpdateToDoItemUseCase,
+    private val insertToDoItemUseCase: InsertToDoItemUseCase
 ) : BaseViewModel() {
 
     private var  _taskDetailLiveData = MutableLiveData<TaskDetailState>(TaskDetailState.Uninitialized)
@@ -37,7 +39,7 @@ internal class DetailViewModel(
                 }
             }
             DetailMode.WRITE -> {
-                // TODO
+                _taskDetailLiveData.postValue(TaskDetailState.Write)
             }
         }
     }
@@ -74,7 +76,20 @@ internal class DetailViewModel(
                 }
             }
             DetailMode.WRITE -> {
-                // TODO
+                try {
+                    val writeToDoEntity = ToDoEntity(
+                        title = title,
+                        description = description,
+                        hasCompleted = false
+                    )
+                    _taskDetailLiveData.postValue(TaskDetailState.Loading)
+                    id = insertToDoItemUseCase(writeToDoEntity)
+                    _taskDetailLiveData.postValue(TaskDetailState.Success(writeToDoEntity))
+                    detailMode = DetailMode.DETAIL
+                } catch (e: Exception) {
+                    e.printStackTrace()
+                    _taskDetailLiveData.postValue(TaskDetailState.Error)
+                }
             }
         }
     }

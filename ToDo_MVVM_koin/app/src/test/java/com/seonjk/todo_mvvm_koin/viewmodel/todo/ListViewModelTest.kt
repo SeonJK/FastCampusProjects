@@ -20,7 +20,7 @@ import org.koin.test.inject
  * 3. test Item Update
  * 4. test Item Delete All
  * */
-internal class LiveViewModelTest : ViewModelTest() {
+internal class ListViewModelTest : ViewModelTest() {
 
 
     private val viewModel: ListViewModel by inject()
