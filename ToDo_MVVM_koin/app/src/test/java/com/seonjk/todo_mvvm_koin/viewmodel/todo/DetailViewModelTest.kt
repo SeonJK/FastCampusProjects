@@ -68,7 +68,7 @@ internal class DetailViewModelTest : ViewModelTest() {
     @Test
     fun `test Todo Delete`(): Unit = runTest {
         val detailTestObservable = viewModel.taskDetailLiveData.test()
-        viewModel.deleteTask(todo.id)
+        viewModel.deleteTask()
         detailTestObservable.assertValueSequence(
             listOf(
                 TaskDetailState.Uninitialized,

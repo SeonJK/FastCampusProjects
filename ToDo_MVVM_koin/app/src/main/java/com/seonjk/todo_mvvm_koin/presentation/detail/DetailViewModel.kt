@@ -44,7 +44,7 @@ internal class DetailViewModel(
         }
     }
 
-    fun deleteTask(id: Long) = viewModelScope.launch{
+    fun deleteTask() = viewModelScope.launch{
         _taskDetailLiveData.postValue(TaskDetailState.Loading)
         try {
             deleteToDoItemUseCase(id)
@@ -53,6 +53,10 @@ internal class DetailViewModel(
             e.printStackTrace()
             _taskDetailLiveData.postValue(TaskDetailState.Error)
         }
+    }
+
+    fun setModifyMode() = viewModelScope.launch {
+        _taskDetailLiveData.postValue(TaskDetailState.Modify)
     }
 
     fun writeTask(title: String, description: String) = viewModelScope.launch {
